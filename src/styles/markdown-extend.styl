@@ -1,0 +1,132 @@
+.about-timeline
+	position relative
+	margin-top 1.4rem
+	margin-bottom 2.5rem
+	padding-left 0.2rem
+	max-width 680px
+
+.about-item
+	position relative
+	padding 0.15rem 0.4rem 0.15rem 2rem
+	margin-bottom 1.55rem
+	border-radius 10px
+	transition background 0.2s ease, transform 0.2s ease
+
+.about-item:hover
+	background rgba(120, 120, 140, 0.045)
+	transform translateX(2px)
+
+.about-item:last-child
+	margin-bottom 0
+
+.about-item::before
+	content ""
+	position absolute
+	left 0.12rem
+	top 0.52rem
+	width 8px
+	height 8px
+	border-radius 50%
+	background #10b981
+	box-shadow 0 0 0 4px rgba(16, 185, 129, 0.10)
+
+.about-item::after
+	content ""
+	position absolute
+	left calc(0.12rem + 3.5px)
+	top 1.35rem
+	width 1px
+	height calc(100% + 0.9rem)
+	background linear-gradient(
+		to bottom,
+		rgba(16, 185, 129, 0.55),
+		rgba(16, 185, 129, 0.12)
+	)
+
+.about-item:last-child::after
+	display none
+
+.about-item-title
+	margin 0 0 0.42rem
+	padding 0
+	font-size 0.98rem
+	font-weight 650
+	line-height 1.4
+	letter-spacing -0.015em
+	color inherit
+
+.about-item-info
+	display flex
+	align-items center
+	gap 0.5rem
+	flex-wrap wrap
+
+.about-role
+	display inline-flex
+	align-items center
+	padding 0.18rem 0.52rem
+	border-radius 999px
+	border 1px solid rgba(16, 185, 129, 0.22)
+	background rgba(16, 185, 129, 0.07)
+	color #10b981
+	font-size 0.73rem
+	font-weight 550
+	line-height 1.35
+
+.about-period
+	display inline-flex
+	align-items center
+	padding 0
+	color rgba(100, 100, 120, 0.66)
+	font-size 0.74rem
+	font-family inherit
+	font-style normal
+	font-weight 400
+	line-height 1.4
+	letter-spacing 0
+
+.about-item.inactive
+	opacity 0.48
+
+.about-item.inactive::before
+	background #9ca3af
+	box-shadow 0 0 0 4px rgba(156, 163, 175, 0.08)
+
+.about-item.inactive::after
+	background rgba(156, 163, 175, 0.2)
+
+.about-item.inactive .about-role
+	color #9ca3af
+	border-color rgba(156, 163, 175, 0.2)
+	background rgba(156, 163, 175, 0.06)
+
+  .about-project
+	margin-top 1rem
+	margin-bottom 1.3rem
+	padding 0.85rem 1rem
+	border 1px solid rgba(120, 120, 140, 0.14)
+	border-radius 10px
+	background rgba(120, 120, 140, 0.025)
+	transition all 0.2s ease
+
+.about-project:hover
+	transform translateY(-2px)
+	border-color rgba(59, 130, 246, 0.25)
+	background rgba(59, 130, 246, 0.035)
+
+.about-project-title
+	display inline-block
+	margin-bottom 0.5rem
+	color inherit
+	font-size 0.98rem
+	font-weight 650
+	text-decoration none
+
+.about-project-title:hover
+	color #3b82f6
+
+.about-project-info
+	display flex
+	align-items center
+	gap 0.5rem
+	flex-wrap wrap

@@ -1,0 +1,361 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { getPostUrlBySlug } from "@utils/url-utils";
+import { formatDateToYYYYMMDD } from "@utils/date-utils";
+
+const { page } = Astro.props;
+const posts = page.data as CollectionEntry<"posts">[];
+
+const postCards = await Promise.all(
+	posts.map(async (entry) => {
+		const { remarkPluginFrontmatter } = await entry.render();
+		return {
+			entry,
+			words: remarkPluginFrontmatter.words,
+			minutes: remarkPluginFrontmatter.minutes,
+		};
+	}),
+);
+
+function getPostDescription(entry: CollectionEntry<"posts">) {
+	return entry.data.description || entry.data.category || "Security note";
+}
+---
+
+<div class="home-shell">
+	<h1 class="sr-only">Martin's Blog posts</h1>
+
+	<div class="home-post-list">
+		{postCards.map(({ entry, words, minutes }, index) => {
+			const postUrl = getPostUrlBySlug(entry.slug);
+			const primaryTag = entry.data.tags?.[0];
+
+			return (
+				<a
+					href={postUrl}
+					aria-label={entry.data.title}
+					class="home-post-card home-scroll-reveal onload-animation"
+					style={`animation-delay: calc(var(--content-delay) + ${index * 55}ms);`}
+				>
+					<div class="post-card-main">
+						<h2>{entry.data.title}</h2>
+
+						<div class="post-card-meta">
+							<span class="meta-item">
+								<span class="meta-icon-box">
+									<Icon name="material-symbols:calendar-today-outline-rounded" />
+								</span>
+								<time>{formatDateToYYYYMMDD(entry.data.published)}</time>
+							</span>
+
+							<span class="meta-item">
+								<span class="meta-icon-box">
+									<Icon name="material-symbols:book-2-outline-rounded" />
+								</span>
+								<span>{entry.data.category || "Note"}</span>
+							</span>
+
+							{primaryTag && (
+								<span class="meta-item">
+									<span class="meta-icon-box">
+										<Icon name="material-symbols:tag-rounded" />
+									</span>
+									<span>{primaryTag}</span>
+								</span>
+							)}
+						</div>
+
+						<p>{getPostDescription(entry)}</p>
+
+						<div class="post-card-stats">
+							<span>{words} 단어</span>
+							<span>{minutes} 분</span>
+						</div>
+					</div>
+
+					<span class="post-card-enter" aria-hidden="true">
+						<Icon name="material-symbols:chevron-right-rounded" />
+					</span>
+				</a>
+			);
+		})}
+	</div>
+</div>
+
+<style>
+	.home-shell {
+		position: relative;
+		padding-bottom: 1rem;
+	}
+
+	.home-shell::before {
+		content: "";
+		position: absolute;
+		inset: -3rem -1rem auto;
+		z-index: -1;
+		height: 18rem;
+		background:
+			radial-gradient(circle at 14% 0%, rgba(92, 192, 241, 0.13), transparent 17rem),
+			radial-gradient(circle at 88% 30%, rgba(159, 222, 253, 0.14), transparent 19rem);
+		pointer-events: none;
+	}
+
+	.home-post-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.home-post-card {
+		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 4.2rem;
+		min-height: 12.8rem;
+		overflow: hidden;
+		border: 1px solid rgba(47, 156, 214, 0.13);
+		border-radius: 1.05rem;
+		color: inherit;
+		text-decoration: none;
+		background:
+			linear-gradient(135deg, rgba(228, 247, 255, 0.26), transparent 42%),
+			rgba(255, 255, 255, 0.94);
+		box-shadow:
+			0 18px 44px -38px rgba(34, 132, 187, 0.36),
+			inset 0 1px 0 rgba(255, 255, 255, 0.96);
+		transition:
+			opacity 0.68s cubic-bezier(0.16, 0.84, 0.2, 1),
+			filter 0.68s cubic-bezier(0.16, 0.84, 0.2, 1),
+			transform 0.2s ease,
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	.home-post-card:hover {
+		border-color: rgba(43, 157, 217, 0.3);
+		box-shadow:
+			0 22px 48px -36px rgba(34, 132, 187, 0.46),
+			inset 0 1px 0 white;
+		transform: translateY(-2px);
+	}
+
+	.post-card-main {
+		min-width: 0;
+		padding: 1.55rem 1.55rem 1.3rem 1.8rem;
+	}
+
+	.post-card-main h2 {
+		position: relative;
+		display: -webkit-box;
+		margin: 0 0 0.9rem;
+		overflow: hidden;
+		color: rgb(23 45 60 / 0.96);
+		font-size: clamp(1.48rem, 2.5vw, 2rem);
+		font-weight: 900;
+		line-height: 1.22;
+		letter-spacing: -0.025em;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+	}
+
+	.post-card-main h2::before {
+		content: "";
+		position: absolute;
+		left: -1rem;
+		top: 0.15em;
+		width: 0.24rem;
+		height: 0.85em;
+		border-radius: 999rem;
+		background: var(--primary);
+		box-shadow: 0 0 1rem rgba(43, 165, 226, 0.28);
+	}
+
+	.post-card-meta,
+	.meta-item,
+	.post-card-stats,
+	.post-card-enter {
+		display: flex;
+		align-items: center;
+	}
+
+	.post-card-meta {
+		flex-wrap: wrap;
+		gap: 0.65rem 1.2rem;
+		margin-bottom: 1rem;
+	}
+
+	.meta-item {
+		gap: 0.48rem;
+		color: rgb(66 80 90 / 0.68);
+		font-size: 0.82rem;
+		font-weight: 650;
+	}
+
+	.meta-icon-box {
+		display: inline-flex;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.48rem;
+		color: rgb(30 132 193);
+		background: rgba(218, 240, 255, 0.9);
+		font-size: 1.15rem;
+	}
+
+	.post-card-main p {
+		display: -webkit-box;
+		margin: 0 0 0.85rem;
+		overflow: hidden;
+		color: rgb(45 63 76 / 0.78);
+		font-size: 0.98rem;
+		line-height: 1.58;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+	}
+
+	.post-card-stats {
+		gap: 0;
+		color: rgb(76 91 102 / 0.42);
+		font-size: 0.78rem;
+		font-weight: 620;
+	}
+
+	.post-card-stats span + span::before {
+		content: "/";
+		margin: 0 0.65rem;
+		color: rgb(53 151 205 / 0.24);
+	}
+
+	.post-card-enter {
+		justify-content: center;
+		margin: 0.7rem 0.7rem 0.7rem 0;
+		border-radius: 0.85rem;
+		color: rgb(48 151 213 / 0.82);
+		background: rgba(215, 238, 255, 0.88);
+		font-size: 2rem;
+		transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+	}
+
+	.home-post-card:hover .post-card-enter {
+		color: rgb(21 129 194);
+		background: rgba(196, 231, 255, 0.96);
+		transform: translateX(2px);
+	}
+
+	.home-scroll-reveal.is-waiting {
+		opacity: 0;
+		filter: blur(10px);
+		transform: translate3d(0, 2rem, 0) scale(0.985);
+	}
+
+	.home-scroll-reveal.is-visible {
+		opacity: 1;
+		filter: blur(0);
+	}
+
+	@media (max-width: 640px) {
+		.home-post-list {
+			gap: 0.75rem;
+		}
+
+		.home-post-card {
+			grid-template-columns: minmax(0, 1fr) 3rem;
+			min-height: 10.7rem;
+			border-radius: 0.9rem;
+		}
+
+		.post-card-main {
+			padding: 1.15rem 0.85rem 1rem 1.15rem;
+		}
+
+		.post-card-main h2 {
+			margin-bottom: 0.72rem;
+			font-size: 1.24rem;
+		}
+
+		.post-card-main h2::before {
+			left: -0.65rem;
+		}
+
+		.post-card-meta {
+			gap: 0.5rem 0.72rem;
+			margin-bottom: 0.72rem;
+		}
+
+		.meta-item {
+			font-size: 0.7rem;
+		}
+
+		.meta-icon-box {
+			width: 1.6rem;
+			height: 1.6rem;
+			font-size: 0.92rem;
+		}
+
+		.post-card-main p {
+			margin-bottom: 0.58rem;
+			font-size: 0.86rem;
+			-webkit-line-clamp: 1;
+		}
+
+		.post-card-stats {
+			font-size: 0.69rem;
+		}
+
+		.post-card-enter {
+			margin: 0.55rem 0.55rem 0.55rem 0;
+			border-radius: 0.7rem;
+			font-size: 1.55rem;
+		}
+	}
+</style>
+
+<script is:inline>
+(() => {
+	const selector = ".home-scroll-reveal";
+	const visibleClass = "is-visible";
+	const waitingClass = "is-waiting";
+
+	function initHomeCards() {
+		document.querySelectorAll(".home-shell").forEach((shell) => {
+			if (!(shell instanceof HTMLElement) || shell.dataset.cardsReady === "true") return;
+			shell.dataset.cardsReady = "true";
+
+			const targets = Array.from(shell.querySelectorAll(selector)).filter(
+				(element) => element instanceof HTMLElement,
+			);
+
+			if (!("IntersectionObserver" in window) || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+				targets.forEach((element) => element.classList.add(visibleClass));
+				return;
+			}
+
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (!entry.isIntersecting) return;
+						entry.target.classList.remove(waitingClass);
+						entry.target.classList.add(visibleClass);
+						observer.unobserve(entry.target);
+					});
+				},
+				{ root: null, rootMargin: "0px 0px -12% 0px", threshold: 0.1 },
+			);
+
+			targets.forEach((element) => {
+				if (element.getBoundingClientRect().top < window.innerHeight * 0.9) {
+					element.classList.add(visibleClass);
+				} else {
+					element.classList.add(waitingClass);
+					observer.observe(element);
+				}
+			});
+		});
+	}
+
+	initHomeCards();
+	document.addEventListener("astro:page-load", initHomeCards);
+	document.addEventListener("swup:content:replace", initHomeCards);
+})();
+</script>

@@ -1,0 +1,108 @@
+---
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const pdfUrl = "/files/career-portfolio.pdf";
+---
+
+<MainGridLayout title="진로" description="진로 활동 포트폴리오 PDF" hideToc={true}>
+	<section class="career-page">
+		<div class="career-toolbar card-base">
+			<div>
+				<p class="career-eyebrow">Career Portfolio</p>
+				<h1>진로</h1>
+			</div>
+			<a class="career-download" href={pdfUrl} download="career-portfolio.pdf">
+				PDF 다운로드
+			</a>
+		</div>
+
+		<div class="career-viewer card-base">
+			<iframe src={pdfUrl} title="진로 활동 포트폴리오 PDF"></iframe>
+		</div>
+	</section>
+</MainGridLayout>
+
+<style>
+	.career-page {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		min-height: calc(100vh - 8rem);
+	}
+
+	.career-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.25rem 1.5rem;
+	}
+
+	.career-eyebrow {
+		margin: 0 0 0.25rem;
+		color: var(--text-50);
+		font-size: 0.875rem;
+	}
+
+	.career-toolbar h1 {
+		margin: 0;
+		color: var(--text-90);
+		font-size: 1.75rem;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	.career-download {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.75rem;
+		padding: 0 1rem;
+		border-radius: 0.75rem;
+		background: oklch(0.55 0.14 var(--hue));
+		color: white;
+		font-weight: 700;
+		text-decoration: none;
+		white-space: nowrap;
+		transition:
+			transform 0.2s ease,
+			background 0.2s ease;
+	}
+
+	.career-download:hover {
+		background: oklch(0.5 0.16 var(--hue));
+		transform: translateY(-1px);
+	}
+
+	.career-viewer {
+		overflow: hidden;
+		min-height: 72vh;
+		padding: 0;
+	}
+
+	.career-viewer iframe {
+		display: block;
+		width: 100%;
+		height: 72vh;
+		border: 0;
+		background: white;
+	}
+
+	@media (max-width: 640px) {
+		.career-toolbar {
+			align-items: flex-start;
+			flex-direction: column;
+			padding: 1rem;
+		}
+
+		.career-download {
+			width: 100%;
+		}
+
+		.career-viewer,
+		.career-viewer iframe {
+			min-height: 68vh;
+			height: 68vh;
+		}
+	}
+</style>
